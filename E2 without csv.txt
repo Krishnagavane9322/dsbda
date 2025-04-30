@@ -1,0 +1,39 @@
+import pandas as pd
+import numpy as np
+
+# Creating a small academic performance dataset
+data = {
+    'Student_ID': [1, 2, 3, 4, 5],
+    'Math_Score': [85, 90, np.nan, 95, 60],
+    'Science_Score': [88, np.nan, 78, 85, 65],
+    'English_Score': [np.nan, 80, 75, 85, 70],
+    'Attendance': [95, 88, 80, np.nan, 70]
+}
+
+df = pd.DataFrame(data)
+print(df)
+
+# Handling missing values (filling with mean)
+df['Math_Score'].fillna(df['Math_Score'].mean(), inplace=True)
+df['Science_Score'].fillna(df['Science_Score'].mean(), inplace=True)
+df['English_Score'].fillna(df['English_Score'].mean(), inplace=True)
+df['Attendance'].fillna(df['Attendance'].mean(), inplace=True)
+
+print("\nAfter handling missing values:")
+print(df)
+
+# Detecting outliers using IQR
+for column in ['Math_Score', 'Science_Score', 'English_Score', 'Attendance']:
+    Q1 = df[column].quantile(0.25)
+    Q3 = df[column].quantile(0.75)
+    IQR = Q3 - Q1
+    lower = Q1 - 1.5 * IQR
+    upper = Q3 + 1.5 * IQR
+    outliers = df[(df[column] < lower) | (df[column] > upper)]
+    print(f"\nOutliers in {column}:\n", outliers)
+
+# Example Transformation: Log transform Attendance
+df['Attendance_log'] = np.log1p(df['Attendance'])  # log(1+x) to avoid log(0)
+
+print("\nAfter log transformation on Attendance:")
+print(df)
